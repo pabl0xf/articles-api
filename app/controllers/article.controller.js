@@ -1,3 +1,5 @@
+'use strict';
+
 const Article = require('../models/article.model.js');
 
 exports.create = (req, res) => {
@@ -11,7 +13,7 @@ exports.create = (req, res) => {
       title: req.body.title || "Untitled article", 
       text: req.body.text,
       tags: req.body.tags,
-      userId: 1
+      userId: req.body.userId
   });
 
   article.save()
@@ -66,5 +68,26 @@ exports.delete = (req, res) => {
     }
 
     return res.status(500).send({ message: "Could not delete article with id " + req.params.articleId });
+  });
+};
+
+exports.get = (req, res) => {
+  const getQuery = ({ tag }) => {
+    const filters = {};
+
+    if (tag) {
+      filters.tags = tag;
+    }
+
+    return filters;
+  };
+
+  Article.find({ tags: {'$all': req.query.tags }})
+  .then(articles => {
+      res.send(articles);
+  }).catch(err => {
+      res.status(500).send({
+          message: err.message || "Some error occurred while retrieving articles."
+      });
   });
 };
