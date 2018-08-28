@@ -64,7 +64,7 @@ exports.delete = (req, res) => {
     res.send({message: "article deleted successfully!"});
   }).catch(err => {
     if(err.kind === 'ObjectId' || err.name === 'NotFound') {
-      return res.status(404).send({ message: "article not found with id " + req.params.articleId });
+      return res.status(400).send({ message: "article not found with id " + req.params.articleId });
     }
 
     return res.status(500).send({ message: "Could not delete article with id " + req.params.articleId });

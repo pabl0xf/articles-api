@@ -3,24 +3,22 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const env = require('dotenv');
-const dbConfig = require('./config/database.js');
 const mongoose = require('mongoose');
 const app = express();
 const auth = require('./app/controllers/auth.controller.js');
 
-if (!process.env.environment) {
-  process.env.environment = 'development';
+if (!process.env.ENVIRONMENT) {
+  process.env.ENVIRONMENT = 'development';
 }
 
-console.log("Environment: ", process.env.environment);
-env.config({ path: './config/' + process.env.environment +'.env' });
+console.log("Environment: ", process.env.ENVIRONMENT);
+env.config({ path: './config/' + process.env.ENVIRONMENT +'.env' });
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 mongoose.Promise = global.Promise;
-
-mongoose.connect(dbConfig.url, {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true
 }).then(() => {
   console.log("Successfully connected to the database");    
@@ -42,3 +40,5 @@ app.use((req, res) => {
 app.listen(process.env.PORT, () => {
   console.log("Server is listening on port ", process.env.PORT);
 });
+
+module.exports = app
